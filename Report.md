@@ -2,7 +2,7 @@
 
 ### Learning algorithm.
 
-The algorithm uses a Deep Deterministic Policy Gradient (DDPG) Agent. The code is based on the code given in lesson 5 of the Policy-Based Methods chapter of the nanodegree.
+The algorithm uses a Deep Deterministic Policy Gradient (DDPG) Agent. The code is based on the one given in lesson 5 of the Policy-Based Methods chapter of the nanodegree.
 Four neural networks are used: critic_local, critic_target, actor_local and actor_target. The critic networks contain of two fully connected hidden layers of 200 neurons each, with ReLU activation functions. Between the two layers, I put a batch normalization layer, as was described in the paper by Lillicrap et al. (2016, section 3).
 
 The architecture of the actor networks is as follows:
