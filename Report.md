@@ -6,17 +6,16 @@ The algorithm uses a Deep Deterministic Policy Gradient (DDPG) Agent. The code i
 Four neural networks are used: critic_local, critic_target, actor_local and actor_target.
 
 The architecture of the actor networks is as follows:
-* input layer size = 33 (state space)
+* input layer size = 33 (state space).
 * 2 hidden layers of each 200 hidden units, with `ReLU` activation layers, and a batch normalization layer after the first hidden layer.
-* output layer size = 4 (the action space), with a tanh activation layer
+* output layer size = 4 (the action space), with a tanh activation layer.
 
 The architecture of the critic networks is as follows:
-* input layer size = 4 (action space)
+* input layer size = 4 (action space).
 * 2 hidden layers of each 200 hidden units, with `ReLU` activation layers, and a batch normalization layer after the first hidden layer.
-* output layer size = 1 (no activation layer)
+* output layer size = 1 (no activation layer).
 
-The use of batch normalization layers was also described in the paper by Lillicrap et al. (2016, section 3). Gradient clipping was added (as given as a hint on the Udacity benchmark description page). I also made that the local networks get the same weights as the corresponding target networks at initialization. I added two hyperparameters, `LEARN_EVERY` and `LEARN_TIMES`, to the original code. After every `LEARN_EVERY` steps, both networks are trained `LEARN_TIMES` times, each time with a different memory sample.
-The hyperparameter values were determined experimentally, with the following values:
+The use of batch normalization layers was also described in the paper by Lillicrap et al. (2016, section 3). Gradient clipping was added (as given as a hint on the Udacity benchmark description page). I also made sure that the local networks get the same weights as the corresponding target networks at initialization. Two hyperparameters, `LEARN_EVERY` and `LEARN_TIMES`, were added to the original code. After every `LEARN_EVERY` steps, both networks are trained `LEARN_TIMES` times, each time with a different memory sample. The hyperparameter values were determined experimentally, I obtained the following values:
 
 * `BUFFER_SIZE` = 1e5       (replay buffer size)
 * `BATCH_SIZE` = 256        (minibatch size)
