@@ -10,7 +10,7 @@ The architecture of the actor networks is as follows:
 * 2 hidden layers of each 200 hidden units, with `ReLU` activation layers, and a batch normalization layer after the first hidden layer.
 * output layer size = 4 (the action space), with a tanh activation layer
 
-The architecture of the critic network is as follows:
+The architecture of the critic networks is as follows:
 * input layer size = 4 (action space)
 * 2 hidden layers of each 200 hidden units, with `ReLU` activation layers, and a batch normalization layer after the first hidden layer.
 * output layer size = 1 (no activation layer)
