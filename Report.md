@@ -3,11 +3,19 @@
 ### Learning algorithm.
 
 The algorithm uses a Deep Deterministic Policy Gradient (DDPG) Agent. The code is based on the code given in lesson 5 of the Policy-Based Methods chapter of the nanodegree.
-Four neural networks are used: critic_local, critic_target, actor_local and actor_target. The critic networks contain of two fully connected layers of 200 neurons each, with ReLU activation functions.
-Between the two layers, I put a batch normalization layer (as was described in the paper by Lillicrap et al. (2016, section 3).
-The actor networks contain a third layer
-I also added gradient clipping (as given as a hint on the Udacity benchmark description page). I added a line to make sure that the local networks get the same weights as the corresponding target networks at initialization.
-I added two hyperparameters, `LEARN_EVERY` and `LEARN_TIMES`. After every `LEARN_EVERY` steps, both networks are trained `LEARN_TIMES` times, each time with a different memory sample.
+Four neural networks are used: critic_local, critic_target, actor_local and actor_target. The critic networks contain of two fully connected hidden layers of 200 neurons each, with ReLU activation functions. Between the two layers, I put a batch normalization layer, as was described in the paper by Lillicrap et al. (2016, section 3).
+
+The architecture of the actor networks is as follows:
+* input layer size = 33 (state space)
+* 2 hidden layers of each 200 hidden units, with `ReLU` activation layers, and a batch normalization layer after the first hidden layer.
+* output layer size = 4 (the action space), with a tanh activation layer
+
+The architecture of the critic network is as follows:
+* input layer size = 4 (action space)
+* 2 hidden layers of each 200 hidden units, with `ReLU` activation layers, and a batch normalization layer after the first hidden layer.
+* output layer size = 1 (no activation layer)
+
+I also added gradient clipping (as given as a hint on the Udacity benchmark description page). I added a line to make sure that the local networks get the same weights as the corresponding target networks at initialization. I added two hyperparameters, `LEARN_EVERY` and `LEARN_TIMES`, to the original code. After every `LEARN_EVERY` steps, both networks are trained `LEARN_TIMES` times, each time with a different memory sample.
 The hyperparameter values were determined experimentally, with the following values:
 
 * `BUFFER_SIZE` = 1e5       (replay buffer size)
@@ -23,4 +31,8 @@ The hyperparameter values were determined experimentally, with the following val
 I also used a `random_seed` value of 10, which worked well.
 
 ### Plot of rewards
-The environment was solved in 354 episodes, as can be seen in the notebook. The actor_local network gave an average score over 100 episodes of 30.04. The plot below shows the 
+ The plot below shows how the score changes as more episodes are simulated. On average, the score goes up. The environment was solved in 354 episodes, as can be seen in the notebook. The actor_local network gave an average score over 100 episodes of 30.04.
+ 
+ ### Ideas for future work
+
+![Episode-score plot](https://github.com/jlfbetting/p2_continuous-control/blob/main/plot_solved.png)
