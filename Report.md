@@ -32,7 +32,10 @@ I also used a `random_seed` value of 10, which worked well.
 
 ### Plot of rewards
  The plot below shows how the score changes as more episodes are simulated. On average, the score goes up. The environment was solved in 354 episodes, as can be seen in the notebook. The actor_local network gave an average score over 100 episodes of 30.04.
+ ![Episode-score plot](https://github.com/jlfbetting/p2_continuous-control/blob/main/plot_solved.png)
  
  ### Ideas for future work
+* We could experiment with adding more elements to the neural networks, such as dropout layers.
+* We could use Prioritized Experience Replay (as introduced in the lesson on Deep Q-Networks, and in [this paper](https://arxiv.org/abs/1511.05952)). Instead of sampling the experiences linearly, we could prioritize the more important experiences (i.e. those experiences from which the network can learn the most) so that training goes more efficiently.
 
-![Episode-score plot](https://github.com/jlfbetting/p2_continuous-control/blob/main/plot_solved.png)
+
