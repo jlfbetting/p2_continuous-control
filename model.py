@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 def hidden_init(layer):
-    """Returns the limits of the weights for the given layer, so that they can be reset to uniform values"""
+    """Returns the limits of the weights for the given layer, so that it can be reset to uniform values that are appropriate given the size of the layer"""
     fan_in = layer.weight.data.size()[0]
     lim = 1. / np.sqrt(fan_in)
     return (-lim, lim)
