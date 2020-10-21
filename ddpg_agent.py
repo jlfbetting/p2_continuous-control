@@ -9,21 +9,21 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 
-BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 256        # minibatch size
-GAMMA = 0.95            # discount factor
-TAU = 5e-2              # for soft update of target parameters
-LR_ACTOR = 1e-4         # learning rate of the actor 
-LR_CRITIC = 1e-4        # learning rate of the critic
-WEIGHT_DECAY = 0        # L2 weight decay
-LEARN_EVERY = 100       # learn after this number of steps
-LEARN_TIMES = 40        # number of sampling and training per cycle
+#self.config["buffer_size"] = int(1e5)  # replay buffer size
+#self.config["batch_size"] = 256        # minibatch size
+#self.config["gamma"] = 0.95            # discount factor
+#self.config["tau"] = 5e-2              # for soft update of target parameters
+#self.config["lr_actor"] = 1e-4         # learning rate of the actor 
+#self.config["lr_critic"] = 1e-4        # learning rate of the critic
+#self.config["weight_decay"] = 0        # L2 weight decay
+#self.config["learn_every"] = 100       # learn after this number of steps
+#self.config["learn_times"] = 40        # number of sampling and training per cycle
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class Agent():
     """Interacts with and learns from the environment."""
     
-    def __init__(self, state_size, action_size, random_seed):
+    def __init__(self, config):
         """Initialize an Agent object.
         
         Params
@@ -32,47 +32,42 @@ class Agent():
             action_size (int): dimension of each action
             random_seed (int): random seed
         """
-        self.state_size = state_size
-        self.action_size = action_size
-        self.seed = random.seed(random_seed)
-
+        self.state_size = config["state_size"];
+        self.action_size = config["action_size"];
+        self.random_seed = config["random_seed"];
+        random.seed(self.random_seed)
+        self.config = config
         # Actor Network (w/ Target Network)
-        self.actor_local = Actor(state_size, action_size, random_seed).to(device)
-        self.actor_target = Actor(state_size, action_size, random_seed).to(device)
-        self.actor_optimizer = optim.Adam(self.actor_local.parameters(), lr=LR_ACTOR)
+        self.actor_local = Actor(self.state_size, self.action_size, self.random_seed).to(device)
+        self.actor_target = Actor(self.state_size, self.action_size, self.random_seed).to(device)
+        self.actor_optimizer = optim.Adam(self.actor_local.parameters(), lr=self.config["lr_actor"])
 
         # Critic Network (w/ Target Network)
-        self.critic_local = Critic(state_size, action_size, random_seed).to(device)
-        self.critic_target = Critic(state_size, action_size, random_seed).to(device)
-        self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
+        self.critic_local = Critic(self.state_size, self.action_size, self.random_seed).to(device)
+        self.critic_target = Critic(self.state_size, self.action_size, self.random_seed).to(device)
+        self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=self.config["lr_critic"], weight_decay=self.config["weight_decay"])
         # Make Regular and Target networks the same at initialization # added by student
         self.soft_update(self.critic_local, self.critic_target, 1)
         self.soft_update(self.actor_local, self.actor_target, 1)
         # Noise process
-        self.noise = OUNoise(action_size, random_seed)
+        self.noise = OUNoise(self.action_size, self.random_seed)
         self.stepCounter = 0;
         # Replay memory
-        self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
+        self.memory = ReplayBuffer(self.action_size, self.config["buffer_size"], self.config["batch_size"], self.random_seed)
     def step(self, state, action, reward, next_state, done):
         """Save experience in replay memory, and use random sample from buffer to learn."""
         # Save experience / reward
         self.memory.add(state, action, reward, next_state, done)
 
         # Learn, if enough samples are available in memory
-        if self.stepCounter >= LEARN_EVERY:
-            if len(self.memory) > BATCH_SIZE:
-             #   print("learning...");
-                for times in range(LEARN_TIMES):
+        if self.stepCounter >= self.config["learn_every"]:
+            if len(self.memory) > self.config["batch_size"]:
+                for times in range(self.config["learn_times"]):
                     experiences = self.memory.sample()
-                    self.learn(experiences, GAMMA)
-            #else:
-             #   print("memory not big enough, not learning...");
+                    self.learn(experiences, self.config["gamma"])
             self.stepCounter = 0;
         else:
             self.stepCounter += 1;
-      #  experiences = self.memory.sample()
-      #  for q in range(10):
-      #      self.learn(experiences, GAMMA)
         
     def act(self, state, add_noise=True):
         """Returns actions for given state as per current policy."""
@@ -86,6 +81,7 @@ class Agent():
         return np.clip(action, -1, 1)
 
     def reset(self):
+        """Calls the reset fuction on self.noise, resetting its internal state (= noise) to mean (mu)."""
         self.noise.reset()
 
     def learn(self, experiences, gamma):
@@ -127,8 +123,8 @@ class Agent():
         self.actor_optimizer.step()
 
         # ----------------------- update target networks ----------------------- #
-        self.soft_update(self.critic_local, self.critic_target, TAU)
-        self.soft_update(self.actor_local, self.actor_target, TAU)                     
+        self.soft_update(self.critic_local, self.critic_target, self.config["tau"])
+        self.soft_update(self.actor_local, self.actor_target, self.config["tau"])                     
 
     def soft_update(self, local_model, target_model, tau):
         """Soft update model parameters.
@@ -151,7 +147,7 @@ class OUNoise:
         self.mu = mu * np.ones(size)
         self.theta = theta
         self.sigma = sigma
-        self.seed = random.seed(seed)
+        random.seed(seed)
         self.reset()
 
     def reset(self):
@@ -161,7 +157,7 @@ class OUNoise:
     def sample(self):
         """Update internal state and return it as a noise sample."""
         x = self.state
-        dx = self.theta * (self.mu - x) + self.sigma * np.array([random.random() for i in range(len(x))])
+        dx = self.theta * (self.mu - x) + self.sigma * np.array([random.normalvariate(0,1) for i in range(len(x))])
         self.state = x + dx
         return self.state
 
@@ -179,7 +175,7 @@ class ReplayBuffer:
         self.memory = deque(maxlen=buffer_size)  # internal memory (deque)
         self.batch_size = batch_size
         self.experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
-        self.seed = random.seed(seed)
+        random.seed(seed)
     
     def add(self, state, action, reward, next_state, done):
         """Add a new experience to memory."""
