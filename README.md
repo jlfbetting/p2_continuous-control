@@ -32,6 +32,8 @@ The observation space consists of 33 variables corresponding to position, rotati
 
 2. Place the file this repository, and unzip (or decompress) the file. 
 
+Instructions on how to install the other dependencies can be found [here](https://github.com/udacity/deep-reinforcement-learning#dependencies).
+
 ### Instructions
 
 The agent can be trained by running the code in the `Continuous_Control.ipynb` notebook. The notebook uses classes from the `ddpg_agent.py` and `model.py` files.
